@@ -4,6 +4,7 @@ from pdf2image import convert_from_path
 from pdf2image.exceptions import PDFPageCountError
 import time
 import os
+from db import debug
 
 
 # функция конвертации xlsx в pdf

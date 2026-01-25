@@ -1,6 +1,9 @@
 import os
 from aiogram import Bot, Dispatcher
 
+# дебаг режим
+debug = True
+
 # токен тг бота
 TOKEN = ""
 

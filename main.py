@@ -8,9 +8,6 @@ from tg_comm import send_images, get_start
 from conv import xlsx_to_pdf, pdf_to_png
 from db import *
 
-# дебаг режим
-debug = True
-
 # last_id - id последнего найденного файла (любого), n - номер попытки найти файл
 # filename_n - дата предыдущего файла с расписанием
 last_id = load_last_id()
