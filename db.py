@@ -29,6 +29,19 @@ def save_last_id(value):
         f.write(str(value))
 
 
+# функция чтения даты последнего расписания
+def load_filename_n():
+    if not os.path.exists("filename_n.txt"):
+        return 1
+    with open("filename_n.txt", "r") as f:
+        return int(f.read().strip())
+
+# функция сохранения даты последнего расписания
+def save_filename_n(value):
+    with open("filename_n.txt", "w") as f:
+        f.write(str(value))
+
+
 # список всех файлов, для их удаления перед скачиванием нового
 all_files = ["page_1.png", "page_2.png", "page_4.png", "sched.xlsx", "sched.pdf"]
 
