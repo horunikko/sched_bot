@@ -70,7 +70,7 @@ async def check():
                     await asyncio.sleep(1)
                     
                     # проверяем является ли расписание изменением
-                    if filename_n == int(filename.split("_")[0]):
+                    if filename_n == int(filename.split("_")[0]) and os.path.exists("old_sched.xlsx"):
                     	fill_sched("old_sched.xlsx", "sched.xlsx")
                     else:
                     	shutil.copy("sched.xlsx", "old_sched.xlsx")
