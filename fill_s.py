@@ -1,6 +1,6 @@
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
-
+import re
 
 changed_fill = PatternFill(
     start_color="FFFF99",
@@ -12,7 +12,11 @@ changed_fill = PatternFill(
 def normal(value):
     if value is None:
         return ""
-    return str(value).strip()
+    else:
+        text = str(value)
+        text = text.replace("\n", " ").replace("\r", " ").replace("\t", " ")
+        text = re.sub(r"\s+", " ", text)
+    return str(text).strip().lower()
 
 
 def fill_sched(old_sched, new_sched):
