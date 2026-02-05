@@ -6,7 +6,7 @@ from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.enums import ParseMode
 import os
 import time
-from db import bot, dp, files, channels, debug, my_id
+from settings import bot, dp, files, channels, debug, my_id
 
 
 # функция отправки группы из трёх картинок расписания с подписью к первой

@@ -6,7 +6,7 @@ import shutil
 from fill_sched import fill_sched
 from tg_cmds import send_images, get_start
 from conv import xlsx_to_pdf, pdf_to_png
-from db import *
+from settings import *
 
 
 # last_id - id последнего найденного файла (любого), n - номер попытки найти файл
@@ -33,14 +33,10 @@ async def check():
                     # найти существующий файл при id от последнего и до +15
                     if response.status != 200:
                         if n < 15:
-                            if debug:
-                                print(f"Нет файла, id - {last_id + n}, попытка номер {n}")
                             n += 1
                             await asyncio.sleep(3)
                             continue
                         else:
-                            if debug:
-                                print(f"Нет файла, id - {last_id + n}, попытка номер {n}")
                             n = 1
                             await asyncio.sleep(3)
                             continue
@@ -120,3 +116,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    print("бот успешно запустился")
