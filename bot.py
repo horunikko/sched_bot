@@ -113,7 +113,7 @@ async def check():
 async def main():
     asyncio.create_task(check())
     await dp.start_polling(bot)
+    print("бот успешно запустился")
 
 if __name__ == "__main__":
     asyncio.run(main())
-    print("бот успешно запустился")
