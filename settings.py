@@ -4,6 +4,12 @@ from aiogram import Bot, Dispatcher
 # дебаг режим
 debug = True
 
+
+# Абсолютный путь к soffice. На дистрибутивах линукса в большинстве случаев менять путь не нужно 
+# Так как это часть libreoffice, то нужно установить его полностью. Команда: apt install libreoffice
+soffice_path = '/usr/bin/soffice'
+
+
 # токен тг бота
 TOKEN = ""
 

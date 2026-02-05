@@ -75,7 +75,7 @@ async def check():
                     
                     # xlsx -> pdf -> png
                     xlsx_to_pdf("sched.xlsx", ".")
-                    pdf_to_png(poppler_path="/usr/bin")
+                    pdf_to_png()
                     if debug:
                         print(f"Успешно выполнено преобразование! id: {last_id + n}")
                     last_id += n
@@ -111,9 +111,9 @@ async def check():
 
 # функция запуска бота
 async def main():
+    print("бот запущен")
     asyncio.create_task(check())
     await dp.start_polling(bot)
-    print("бот успешно запустился")
 
 if __name__ == "__main__":
     asyncio.run(main())

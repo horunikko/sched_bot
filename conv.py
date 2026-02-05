@@ -4,12 +4,11 @@ from pdf2image import convert_from_path
 from pdf2image.exceptions import PDFPageCountError
 import time
 import os
-from settings import debug
-
+from settings import debug, soffice_path
 
 # функция конвертации xlsx в pdf
-def xlsx_to_pdf(input_file, output_dir):
-    cmd = rf'/usr/bin/soffice --headless --convert-to pdf --outdir {output_dir} {input_file}'
+def xlsx_to_pdf(input_file, output_dir, soffice_path=soffice_path):
+    cmd = rf'{soffice_path} --headless --convert-to pdf --outdir {output_dir} {input_file}'
     success = False
     while not success:
         try:
@@ -24,7 +23,7 @@ def xlsx_to_pdf(input_file, output_dir):
 
 
 # функция конвертации pdf в png
-def pdf_to_png(poppler_path):
+def pdf_to_png():
     success = False
     while not success:
         try:
