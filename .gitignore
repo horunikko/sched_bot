@@ -205,3 +205,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Игнорировать все PNG из папки images
+images/*.png
+
+# Игнорировать все лог-файлы
+*.log

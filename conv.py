@@ -27,6 +27,7 @@ def pdf_to_png():
     success = False
     while not success:
         try:
+            # страницы, на которых есть расписание
             n_page = [0, 1, 3]
             pages = convert_from_path('sched.pdf', dpi=150)
             if debug:
