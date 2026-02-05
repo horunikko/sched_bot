@@ -78,7 +78,7 @@ async def msg_delete(message: Message, command: CommandObject):
         try:
             args = command.args.split()
             chat_id = channels[int(args[0].strip()) - 1]
-            msg_id = args[1]
+            msg_id = int(args[1])
             for i in range(3):
                 await bot.delete_message(chat_id=chat_id, message_id=msg_id + i)
             await message.answer("Сообщение было успешно удалено!")
