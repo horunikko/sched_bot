@@ -48,11 +48,13 @@ async def check():
                     # сли мы нашли файл, то для начала получаем его имя, отделяя от него "filename="
                     first_filename = response.headers.get("Content-Disposition")
                     filename = first_filename.split("filename=")[1].strip('"')
+                    data = await response.read()
 
                     # если файл не соответствует требованиям (расширение .xlsx и день недели в названии),
+                    # а так же если хэш файла равен хэшу предыдущего расписания,
                     # то повышаем last_id на 1 и изменяем n (номер попытки) на 1, чтобы при следующей
                     # проверке цикл начинался с первой попыке (last_id + 1)
-                    if not approve(filename):
+                    if not approve(filename, data):
                         if debug:
                             print(f"Не тот файл, id - {last_id + n}, попытка номер {n}")
                         last_id += n
@@ -64,7 +66,6 @@ async def check():
                     # найден нужный файл, для начала скачиваем его, потом преобразуем скачанную excel таблицу
                     # в pdf файл для дальнейшего преобразования в картинку png. предварительно удаляем предыдущие файлы
                     delete()
-                    data = await response.read()
                     with open("sched.xlsx", "wb") as f:
                         f.write(data)
                     await asyncio.sleep(1)
