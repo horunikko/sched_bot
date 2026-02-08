@@ -3,8 +3,8 @@ import asyncio
 import time
 import os
 import shutil
-from fill_sched import fill_sched
-from tg_cmds import send_images, get_start
+from xlsx_defs import fill_sched
+from tg_cmds import send_images, get_start, send_private
 from conv import xlsx_to_pdf, pdf_to_png
 from settings import *
 
@@ -22,7 +22,7 @@ async def check():
 
     timeout = aiohttp.ClientTimeout(total=15)
 
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(timeout=timeout) as session:
         while True:
             url = f'{url_base}{last_id + n}'
 
@@ -43,6 +43,9 @@ async def check():
 
                     # сли мы нашли файл, то для начала получаем его имя, отделяя от него "filename="
                     first_filename = response.headers.get("Content-Disposition")
+                    if "filename=" not in first_filename:
+                        continue
+
                     filename = first_filename.split("filename=")[1].strip('"')
                     data = await response.read()
 
@@ -67,8 +70,11 @@ async def check():
                     await asyncio.sleep(1)
                     
                     # проверяем является ли расписание изменением
+                    new = True
+
                     if filename_n == int(filename.split("_")[0]) and os.path.exists("old_sched.xlsx"):
-                    	fill_sched("old_sched.xlsx", "sched.xlsx")
+                        fill_sched("old_sched.xlsx", "sched.xlsx")
+                        new = False
                     else:
                     	shutil.copy("sched.xlsx", "old_sched.xlsx")
                     	save_filename_n(filename.split("_")[0])
@@ -83,7 +89,8 @@ async def check():
                     n = 1
                     
                     # отправляем
-                    await send_images(filename)
+                    await send_images()
+                    await send_private(new=new)
                     await asyncio.sleep(3)
 
             # перебор известных мне ошибок
@@ -112,6 +119,7 @@ async def check():
 # функция запуска бота
 async def main():
     print("бот запущен")
+    init_db()
     asyncio.create_task(check())
     await dp.start_polling(bot)
 
