@@ -3,7 +3,7 @@ from aiogram import types, Router, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters import CommandStart, Command, CommandObject
-from aiogram.exceptions import TelegramBadRequest
+from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
 from aiogram.enums import ParseMode
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
@@ -54,13 +54,23 @@ async def send_images(chats=channels):
 async def send_private(new):
     for class_name in global_classes:
         reply = find_in_sched(new=new, classes=[class_name])
-        if reply:
+
+        if not new:
+            last_reply = find_in_sched(new=new, classes=[class_name], file='rec_sched.xlsx')
+
+        if reply and last_reply != reply:
+
             for student in get_students(class_name=class_name):
                 try:
                     await bot.send_message(chat_id=int(student), text=reply, parse_mode='HTML')
                     await asyncio.sleep(0.1)
+
+                except TelegramForbiddenError:
+                    await bot.send(message(chat_id=id4log, text='Пользователь заблокировал бота, удаляем его из бд...'))
+                    remove_student(int(student))
+
                 except Exception as e:
-                    await bot.send_message(chat_id=my_id, text=f"Ошибка отправки: {e}")
+                    await bot.send_message(chat_id=id4log, text=f"Ошибка отправки: {e}")
                     await asyncio.sleep(0.5)
 
 
@@ -136,7 +146,6 @@ async def back(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await callback.answer('')
     await callback.message.edit_text(text="Приветствую!\n\n\n"
-
                               '- Для автоматического получения оповещений об изменении расписания вашего класса, нажмите кнопку <b>"Привязать"</b>\n'
                               '- Для отключения оповещений, нажмите кнопку <b>"Отвязать"</b>\n'
                               '- Для получения текущего расписания вашего класса, нажмите <b>"Получить расписание"</b>\n'
@@ -174,6 +183,7 @@ async def get_sched(message: Message, command: CommandObject):
     if command.args:
         reply = find_in_sched(get=True, new=False, classes=[normal(command.args)])
         await message.answer(text=reply, parse_mode='HTML', reply_markup=kb_back)
+
     elif student_exists(message.from_user.id):
         reply = find_in_sched(get=True, new=False, classes=[get_student_class(message.from_user.id)])
         await message.answer(text=reply, parse_mode='HTML', reply_markup=kb_back)
@@ -212,9 +222,11 @@ async def msg_delete(message: Message, command: CommandObject):
             args = command.args.split()
             chat_id = channels[int(args[0].strip()) - 1]
             msg_id = int(args[1])
+
             for i in range(3):
                 await bot.delete_message(chat_id=chat_id, message_id=msg_id + i)
             await message.answer("Сообщение было успешно удалено!")
+            
         except Exception as e:
             print(e)
             await message.answer(f"Ошибка удаления: {e}")
@@ -225,15 +237,6 @@ async def msg_delete(message: Message, command: CommandObject):
             text += f"{n + 1}. {channel.title}\n"
     
         await message.answer(text, parse_mode='HTML')
-
-
-# проверка подписан ли человек на тгк
-async def is_subscribed(user_id):
-    try:
-        member = await bot.get_chat_member(-1002179274617, user_id)
-        return member.status in ("member", "administrator", "creator")
-    except TelegramBadRequest:
-        return False
 
 
 # кнопка для привязки после команды /start

@@ -13,7 +13,7 @@ changed_fill = PatternFill(
 
 # получаем день расписания
 def get_day(file='sched.xlsx'):
-
+    
     wb = load_workbook(file)
     ws = wb.active
 
