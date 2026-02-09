@@ -144,14 +144,21 @@ async def author(callback: CallbackQuery):
 @dp.callback_query(F.data == 'back')
 async def back(callback: CallbackQuery, state: FSMContext):
     await state.clear()
-    await callback.answer('')
-    await callback.message.edit_text(text="Приветствую!\n\n\n"
-                              '- Для автоматического получения оповещений об изменении расписания вашего класса, нажмите кнопку <b>"Привязать"</b>\n'
-                              '- Для отключения оповещений, нажмите кнопку <b>"Отвязать"</b>\n'
-                              '- Для получения текущего расписания вашего класса, нажмите <b>"Получить расписание"</b>\n'
-                              '- Команда для получения расписания конкретного класса: <blockquote>/get <i>класс</i></blockquote>\n'
-                              '\n\n<tg-spoiler><i>При обнаружении бага просьба сообщить о нём @ahorotoru</i></tg-spoiler>',
-                               parse_mode='HTML', reply_markup=inline_start)
+    try:
+        await callback.answer('')
+        await callback.message.edit_text(text="Приветствую!\n\n\n"
+                                '- Для автоматического получения оповещений об изменении расписания вашего класса, нажмите кнопку <b>"Привязать"</b>\n'
+                                '- Для отключения оповещений, нажмите кнопку <b>"Отвязать"</b>\n'
+                                '- Для получения текущего расписания вашего класса, нажмите <b>"Получить расписание"</b>\n'
+                                '- Команда для получения расписания конкретного класса: <blockquote>/get <i>класс</i></blockquote>\n'
+                                '\n\n<tg-spoiler><i>При обнаружении бага просьба сообщить о нём @ahorotoru</i></tg-spoiler>',
+                                parse_mode='HTML', reply_markup=inline_start)
+    except TelegramBadRequest:
+        pass
+    except Exception as e:
+        await callback.answer('Произошла ошибка!')
+        await bot.send_message(chat_id=callback.from_user.id, text='Произошла ошибка, перезапустите бота командой <code>/start</code>', parse_mode='HTML')
+        await bot.send_message(chat_id=id4log, text=f'Ошибка: {e}')
 
 
 # добавления пользователя в базу данных
@@ -226,7 +233,7 @@ async def msg_delete(message: Message, command: CommandObject):
             for i in range(3):
                 await bot.delete_message(chat_id=chat_id, message_id=msg_id + i)
             await message.answer("Сообщение было успешно удалено!")
-            
+
         except Exception as e:
             print(e)
             await message.answer(f"Ошибка удаления: {e}")
