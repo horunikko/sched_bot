@@ -99,21 +99,21 @@ async def check():
             except aiohttp.ClientConnectorError as e:
                 if debug:
                     print(f"Ошибка подключения: {e}")
-                    await bot.send_message(chat_id=my_id, text=f"Ошибка подключение: {e}")
+                    await bot.send_message(chat_id=id4log, text=f"Ошибка подключение: {e}")
                 await asyncio.sleep(10)
                 continue
 
             except asyncio.TimeoutError:
                 if debug:
                     print("Таймаут")
-                    await bot.send_message(chat_id=my_id, text=f"Таймаут бота")
+                    await bot.send_message(chat_id=id4log, text=f"Таймаут бота")
                 await asyncio.sleep(10)
                 continue
 
             except Exception as e:
                 if debug:
                     print(f"Непредвиденная ошибка: {e}")
-                    await bot.send_message(chat_id=my_id, text=f"Непредвиденная ошибка: {e}")
+                    await bot.send_message(chat_id=id4log, text=f"Непредвиденная ошибка: {e}")
                 await asyncio.sleep(10)
                 continue
 

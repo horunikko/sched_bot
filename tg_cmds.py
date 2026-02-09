@@ -46,6 +46,7 @@ async def send_images(chats=channels):
         except Exception as e:
             if debug:
                 print(f"Ошибка отправки {filename}: {e}")
+                await bot.send_message(chat_id=id4log, text=f"Ошибка отправки {filename}: {e}")
             att -= 1
             await asyncio.sleep(5)
 
