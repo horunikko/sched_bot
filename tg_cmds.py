@@ -58,7 +58,7 @@ async def send_private(new):
         if not new:
             last_reply = find_in_sched(new=new, classes=[class_name], file='rec_sched.xlsx')
 
-        if reply and last_reply != reply:
+        if reply and normal(last_reply) != normal(reply):
 
             for student in get_students(class_name=class_name):
                 try:

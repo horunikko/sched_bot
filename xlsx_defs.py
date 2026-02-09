@@ -20,18 +20,6 @@ def get_day(file='sched.xlsx'):
     return ws.cell(row=1, column=1).value.split("\n")[1]
 
 
-# функция проверки клетки на наличие номера урока
-def is_lesson_num(v):
-
-    # на всякий проверяем если вместо None пустая клетка будет содержать пробелы
-    if normal(v) == '':
-        return False
-
-    s = str(v).strip()
-
-    return s.isdigit()
-
-
 # функция нахождения номера урока
 def find_num_col(ws, class_row, class_col):
 
@@ -44,6 +32,16 @@ def find_num_col(ws, class_row, class_col):
             return c
         
     return None
+
+
+# функция проверки клетки на наличие номера урока
+def is_lesson_num(v):
+    # на всякий проверяем если вместо None пустая клетка будет содержать пробелы
+    if normal(v) == '':
+        return False
+    s = str(v).strip()
+
+    return s.isdigit()
 
 
 # нормализуем строку для её проверки
@@ -148,6 +146,7 @@ def find_in_sched(new=True, file='sched.xlsx', classes=global_classes, get=False
         while True:
             # номер урока, сама клетка (для проверки по цвету), урок
             lesson_num = ws.cell(row=r, column=num_col).value
+            lesson_time = ws.cell(row=r, column=num_col + 1).value
             lesson_cell = ws.cell(row=r, column=class_col)
             lesson = lesson_cell.value
 
@@ -163,12 +162,12 @@ def find_in_sched(new=True, file='sched.xlsx', classes=global_classes, get=False
 
                 if fill == changed_fill:
                     has_lessons = True
-                    lessons += f'<blockquote>{lesson_num}. <b>(Изм.)</b> {lesson}</blockquote>\n'
+                    lessons += f'<blockquote>{lesson_num}. <b>(Изм.)</b> {lesson}</blockquote>\n<i>{lesson_time}</i>\n'
                 else:
-                    lessons += f'<blockquote>{lesson_num}. {lesson}</blockquote>\n'
+                    lessons += f'<blockquote>{lesson_num}. {lesson}</blockquote>\n<i>{lesson_time}</i>\n'
 
             else:
-                lessons += f'<blockquote>{lesson_num}. {lesson}</blockquote>\n'
+                lessons += f'<blockquote>{lesson_num}. {lesson}</blockquote>\n<i>{lesson_time}</i>\n'
 
             # идём дальше вниз на ещё одну клетку
             r += 1
