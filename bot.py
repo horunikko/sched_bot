@@ -64,7 +64,12 @@ async def check():
 
                     # найден нужный файл, для начала скачиваем его, потом преобразуем скачанную excel таблицу
                     # в pdf файл для дальнейшего преобразования в картинку png. предварительно удаляем предыдущие файлы
+                    # плюсом сохраняем предыдущее расписание в качестве rec_sched.xlsx
+                    if os.path.exists("sched.xlsx"):
+                        shutil.copy("sched.xlsx", "rec_sched.xlsx")
+                        
                     delete()
+
                     with open("sched.xlsx", "wb") as f:
                         f.write(data)
                     await asyncio.sleep(1)
@@ -79,7 +84,6 @@ async def check():
                     	shutil.copy("sched.xlsx", "old_sched.xlsx")
                     	save_filename_n(filename.split("_")[0])
 
-                    shutil.copy("sched.xlsx", "rec_sched.xlsx")
                     
                     # xlsx -> pdf -> png
                     xlsx_to_pdf("sched.xlsx", ".")
