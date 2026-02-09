@@ -78,6 +78,8 @@ async def check():
                     else:
                     	shutil.copy("sched.xlsx", "old_sched.xlsx")
                     	save_filename_n(filename.split("_")[0])
+
+                    shutil.copy("sched.xlsx", "rec_sched.xlsx")
                     
                     # xlsx -> pdf -> png
                     xlsx_to_pdf("sched.xlsx", ".")
