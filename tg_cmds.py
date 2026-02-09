@@ -3,7 +3,7 @@ from aiogram import types, Router, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters import CommandStart, Command, CommandObject
-from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
+from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError, TelegramNetworkError
 from aiogram.enums import ParseMode
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
@@ -144,22 +144,26 @@ async def author(callback: CallbackQuery):
 # кнопка Назад
 @dp.callback_query(F.data == 'back')
 async def back(callback: CallbackQuery, state: FSMContext):
-    await state.clear()
-    try:
-        await callback.answer('')
-        await callback.message.edit_text(text="Приветствую!\n\n\n"
-                                '- Для автоматического получения оповещений об изменении расписания вашего класса, нажмите кнопку <b>"Привязать"</b>\n'
-                                '- Для отключения оповещений, нажмите кнопку <b>"Отвязать"</b>\n'
-                                '- Для получения текущего расписания вашего класса, нажмите <b>"Получить расписание"</b>\n'
-                                '- Команда для получения расписания конкретного класса: <blockquote>/get <i>класс</i></blockquote>\n'
-                                '\n\n<tg-spoiler><i>При обнаружении бага просьба сообщить о нём @ahorotoru</i></tg-spoiler>',
-                                parse_mode='HTML', reply_markup=inline_start)
-    except TelegramBadRequest:
-        pass
-    except Exception as e:
-        await callback.answer('Произошла ошибка!')
-        await bot.send_message(chat_id=callback.from_user.id, text='Произошла ошибка, перезапустите бота командой <code>/start</code>', parse_mode='HTML')
-        await bot.send_message(chat_id=id4log, text=f'Ошибка: {e}')
+    for _ in range(3):
+        try:
+            await state.clear()
+            await callback.answer('')
+            await callback.message.edit_text(text="Приветствую!\n\n\n"
+                                    '- Для автоматического получения оповещений об изменении расписания вашего класса, нажмите кнопку <b>"Привязать"</b>\n'
+                                    '- Для отключения оповещений, нажмите кнопку <b>"Отвязать"</b>\n'
+                                    '- Для получения текущего расписания вашего класса, нажмите <b>"Получить расписание"</b>\n'
+                                    '- Команда для получения расписания конкретного класса: <blockquote>/get <i>класс</i></blockquote>\n'
+                                    '\n\n<tg-spoiler><i>При обнаружении бага просьба сообщить о нём @ahorotoru</i></tg-spoiler>',
+                                    parse_mode='HTML', reply_markup=inline_start)
+        except TelegramBadRequest:
+            await asyncio.sleep(1)
+        except TelegramNetworkError:
+            await asyncio.sleep(1)
+            
+        except Exception as e:
+            await callback.answer('Произошла ошибка!')
+            await bot.send_message(chat_id=callback.from_user.id, text='Перезапустите бота командой <code>/start</code>', parse_mode='HTML')
+            await bot.send_message(chat_id=id4log, text=f'Ошибка: {e}')
 
 
 # добавления пользователя в базу данных
