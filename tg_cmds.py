@@ -159,10 +159,8 @@ async def back(callback: CallbackQuery, state: FSMContext):
             await asyncio.sleep(1)
         except TelegramNetworkError:
             await asyncio.sleep(1)
-            
+
         except Exception as e:
-            await callback.answer('Произошла ошибка!')
-            await bot.send_message(chat_id=callback.from_user.id, text='Перезапустите бота командой <code>/start</code>', parse_mode='HTML')
             await bot.send_message(chat_id=id4log, text=f'Ошибка: {e}')
 
 
