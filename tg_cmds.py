@@ -65,7 +65,7 @@ async def send_private(new):
             for student in get_students(class_name=class_name):
                 try:
                     await bot.send_message(chat_id=int(student), text=reply, parse_mode='HTML')
-                    await asyncio.sleep(0.2)
+                    await asyncio.sleep(0.15)
 
                 except TelegramForbiddenError:
                     await bot.send_message(chat_id=id4log, text='Пользователь заблокировал бота, удаляем его из бд...')
@@ -174,12 +174,12 @@ async def reg_last(message: Message, state: FSMContext):
         await state.clear()
         return
 
-    await state.update_data(usr_class=message.text.lower().replace("a", "а"))
+    await state.update_data(usr_class=normal(message.text))
     class_data = await state.get_data()
     class_name = normal(class_data["usr_class"])
 
     if class_name in global_classes:
-        add_student(student_id=message.from_user.id, class_name=class_name)
+        add_student(student_id=message.from_user.id, class_name=class_name.replace("a", "а").replace("e", "е"))
         await message.answer(text=f"Вы успешно привязались к классу <b>{class_name.upper()}</b>!", parse_mode='HTML', reply_markup=kb_back)
         await state.clear()
     else:
@@ -192,7 +192,7 @@ async def reg_last(message: Message, state: FSMContext):
 async def get_sched(message: Message, command: CommandObject):
 
     if command.args:
-        reply = find_in_sched(get=True, new=False, classes=[normal(command.args.replace("a", "а"))])
+        reply = find_in_sched(get=True, new=False, classes=[normal(command.args.replace("a", "а").replace("e", "е"))])
         await message.answer(text=reply, parse_mode='HTML', reply_markup=kb_back)
 
     elif student_exists(message.from_user.id):
