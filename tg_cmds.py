@@ -55,6 +55,7 @@ async def send_images(chats=channels):
 async def send_private(new):
     for class_name in global_classes:
         reply = find_in_sched(new=new, classes=[class_name])
+        last_reply = 'False'
 
         if not new:
             last_reply = find_in_sched(new=new, classes=[class_name], file='rec_sched.xlsx')
@@ -64,10 +65,10 @@ async def send_private(new):
             for student in get_students(class_name=class_name):
                 try:
                     await bot.send_message(chat_id=int(student), text=reply, parse_mode='HTML')
-                    await asyncio.sleep(0.1)
+                    await asyncio.sleep(0.2)
 
                 except TelegramForbiddenError:
-                    await bot.send(message(chat_id=id4log, text='Пользователь заблокировал бота, удаляем его из бд...'))
+                    await bot.send_message(chat_id=id4log, text='Пользователь заблокировал бота, удаляем его из бд...')
                     remove_student(int(student))
 
                 except Exception as e:
@@ -100,7 +101,7 @@ async def start(callback: CallbackQuery, state: FSMContext):
         else:
             await callback.answer('')
             await callback.message.edit_text(text=f'Вы уже получаете оповещения об изменении расписании <b>{get_student_class(callback.from_user.id).upper()}</b> класса!', parse_mode='HTML', reply_markup=kb_back)
-
+    
     except TelegramBadRequest:
         pass
 
@@ -156,9 +157,9 @@ async def back(callback: CallbackQuery, state: FSMContext):
                                     '\n\n<tg-spoiler><i>При обнаружении бага просьба сообщить о нём @ahorotoru</i></tg-spoiler>',
                                     parse_mode='HTML', reply_markup=inline_start)
         except TelegramBadRequest:
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
         except TelegramNetworkError:
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
 
         except Exception as e:
             await bot.send_message(chat_id=id4log, text=f'Ошибка: {e}')
@@ -191,7 +192,7 @@ async def reg_last(message: Message, state: FSMContext):
 async def get_sched(message: Message, command: CommandObject):
 
     if command.args:
-        reply = find_in_sched(get=True, new=False, classes=[normal(command.args)])
+        reply = find_in_sched(get=True, new=False, classes=[normal(command.args.replace("a", "а"))])
         await message.answer(text=reply, parse_mode='HTML', reply_markup=kb_back)
 
     elif student_exists(message.from_user.id):
