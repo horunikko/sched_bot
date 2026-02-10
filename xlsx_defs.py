@@ -97,7 +97,7 @@ def find_in_sched(new=True, file='sched.xlsx', classes=global_classes, get=False
     ws = wb.active
 
     if classes[0] not in global_classes:
-        return f'Класс {classes} не найден!'
+        return f'Класс {classes[0].upper()} не найден!'
 
     # устраиваем перебор по названию классов в списке
     for class_name in classes:
