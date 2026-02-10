@@ -21,21 +21,24 @@ def get_day(file='sched.xlsx'):
 
 
 # функция нахождения номера урока
-def find_num_col(ws, class_row, class_col):
+def find_num_col(ws, class_row, class_col, att=1, dist=False) -> int:
 
     # идём влево по колонкам и на 1 вниз
     for c in range(class_col - 1, 0, -1):
-        v = ws.cell(row=class_row + 1, column=c).value
+        v = ws.cell(row=class_row + att, column=c).value
 
         # устраиваем проверку на то, является ли значение номером урока
+        if "дистан" in normal(v):
+            return find_num_col(ws, class_row, class_col, att=att+1, dist=True)
         if is_lesson_num(v):
-            return c
-        
+            return c, class_row + att, dist
+
+    print('Не найден номер урока')
     return None
 
 
 # функция проверки клетки на наличие номера урока
-def is_lesson_num(v):
+def is_lesson_num(v) -> bool:
     # на всякий проверяем если вместо None пустая клетка будет содержать пробелы
     if normal(v) == '':
         return False
@@ -130,10 +133,12 @@ def find_in_sched(new=True, file='sched.xlsx', classes=global_classes, get=False
         # список уроков с классом сверху
         day = ws.cell(row=1, column=1).value.split("\n")[1]
         lessons = f'<b>{day}</b><b>\n\n{class_name}</b>\n\n'
-        r = class_row + 1
 
         # ищем колонку с номером
-        num_col = find_num_col(ws, class_row, class_col)
+        num_col, r, dist = find_num_col(ws, class_row, class_col)
+
+        if dist:
+            lessons += "<b>Дистанционное обучение!</b>\n\n"
 
         if not num_col:
             print("не найдена колонка с номерами")
