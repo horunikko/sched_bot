@@ -53,7 +53,7 @@ def normal(value):
         return ""
     
     # убираем лишние пакости и в целом приводим к нормальной строке
-    text = re.sub(r"[\s\-—_,/]+", " ", str(value))
+    text = re.sub(r"[\s\-—_,/<>]+", " ", str(value))
     text = text.replace(" ", "")
     return text.lower()
 
@@ -65,7 +65,7 @@ def normal_4_send(value):
     
     # на случай тире в названии урока и переносах строки делаем так
     text = value.replace("-", '').replace("—", '').replace("\n", '')
-    text = re.sub(r"\s+", " ", text)
+    text = re.sub(r"[\s<>]+", " ", text)
     return text
 
 
